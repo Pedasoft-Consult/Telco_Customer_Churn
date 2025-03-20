@@ -1,0 +1,106 @@
+# Configuration file for Customer Churn Prediction project
+
+# Data Configuration
+data:
+  raw_data_path: "data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+  processed_data_path: "data/processed/processed_telco_data.csv"
+  test_size: 0.2
+  random_state: 42
+  target_column: "Churn"
+
+# Feature Engineering
+features:
+  categorical_columns:
+    - "gender"
+    - "Partner"
+    - "Dependents"
+    - "PhoneService"
+    - "MultipleLines"
+    - "InternetService"
+    - "OnlineSecurity"
+    - "OnlineBackup"
+    - "DeviceProtection"
+    - "TechSupport"
+    - "StreamingTV"
+    - "StreamingMovies"
+    - "Contract"
+    - "PaperlessBilling"
+    - "PaymentMethod"
+  numerical_columns:
+    - "tenure"
+    - "MonthlyCharges"
+    - "TotalCharges"
+  binary_columns:
+    - "SeniorCitizen"
+  id_column: "customerID"
+  scaling: "standard"  # Options: standard, minmax, robust
+  create_tenure_years: true
+
+# Model Configuration
+models:
+  logistic_regression:
+    enabled: true
+    hyperparameters:
+      C: [0.001, 0.01, 0.1, 1, 10, 100]
+      penalty: ["l1", "l2"]
+      solver: ["liblinear"]
+      max_iter: [1000]  # Fixed: wrapped in brackets to make it a list
+
+  random_forest:
+    enabled: true
+    hyperparameters:
+      n_estimators: [100, 200, 300]
+      max_depth: [5, 8, 15, 25, 30]
+      min_samples_split: [2, 5, 10, 15]
+      min_samples_leaf: [1, 2, 5, 10]
+
+  xgboost:
+      enabled: true
+      hyperparameters:
+        n_estimators: [100, 200, 300]
+        max_depth: [3, 5, 7, 9]
+        learning_rate: [0.01, 0.05, 0.1, 0.2]
+        subsample: [0.8, 0.9, 1.0]
+        colsample_bytree: [0.8, 0.9, 1.0]
+
+  neural_network:
+      enabled: false
+      hyperparameters:
+        hidden_layer_sizes: [(50,), (100,), (50, 50), (100, 50)]
+        activation: ["relu", "tanh"]
+        alpha: [0.0001, 0.001, 0.01]
+        learning_rate_init: [0.001, 0.01]
+        max_iter: [1000]  # Make sure this is also a list
+
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1"
+    - "roc_auc"
+  cross_validation:
+    enabled: true
+    n_splits: 5
+    shuffle: true
+    random_state: 42
+  use_smote: false  # Enable SMOTE for imbalanced data
+
+# Model Saving
+model_saving:
+  save_path: "models/trained/"
+  best_model_name: "best_model.pkl"
+  evaluation_results_path: "models/evaluation/model_comparison.json"
+
+# Logging Configuration
+logging:
+  log_file: "logs/app.log"
+  log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  console_log: true
+
+# Web Application
+webapp:
+  host: "0.0.0.0"
+  port: 5000
+  debug: true
